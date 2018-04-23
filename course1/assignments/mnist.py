@@ -52,6 +52,8 @@ def train_mnist(batch_iterator: Iterable[Tuple[tf.Tensor, tf.Tensor]]) -> None:
         - compute accuracy in tensorflow
         - create summary and FileWriter (https://www.tensorflow.org/programmers_guide/summaries_and_tensorboard)
         - see the training progress in TensorBoard
+        - add L2 variable regularization to REGULARIZATION_LOSSES collection
+          and use this collection when creating the loss
 
     :param batch_iterator: MNIST training x, y tuples iterator ([None, 784], [None, 10])
     """
