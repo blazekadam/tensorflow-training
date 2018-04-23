@@ -1,8 +1,9 @@
 import tensorflow as tf
 import pytest
+import numpy as np
 
 
-from course1.assignments.basics import find_tensor_by_name, populate_collection
+from course1.assignments.basics import find_tensor_by_name, populate_collection, create_variable, update_variable
 
 
 @pytest.mark.parametrize('name', ('my_name', 'another_name'))
@@ -41,3 +42,16 @@ def test_collection():
         assert tf.identity(var).dtype == tf.int32
         assert var.get_shape().as_list() == [10, 10]
         assert var.name == 'coolsie:0'
+
+
+def test_variable():
+
+    with tf.Graph().as_default():
+        with tf.Session().as_default():
+            var = create_variable()
+            tf.global_variables_initializer().run()
+            assert var.get_shape().as_list() == [100, 200]
+            assert tf.identity(var).dtype == tf.float32
+            np.testing.assert_allclose(var.eval(), np.ones((100, 200)))
+            update_variable(var)
+            np.testing.assert_allclose(var.eval(), np.zeros((100, 200)))
