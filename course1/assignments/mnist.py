@@ -18,6 +18,9 @@ def build_mnist_feed_forward(x: tf.Tensor) -> tf.Tensor:
     :param y: target classes of shape [None, 10]
     :return: y predictions of shape [None, 10]
     """
+    hidden = tf.layers.dense(x, 100, activation=tf.nn.relu)
+    output = tf.identity(tf.layers.dense(hidden, 10, activation=None), 'y_pred')
+    return output
 
 
 def build_mnist_optimizer(y, y_pred) -> tf.Operation:
@@ -35,6 +38,8 @@ def build_mnist_optimizer(y, y_pred) -> tf.Operation:
     :param y_pred: target predictions of shape [None, 10]
     :return: training operation
     """
+    loss = tf.nn.softmax_cross_entropy_with_logits_v2(logits=y_pred, labels=y)
+    return tf.train.GradientDescentOptimizer(0.01).minimize(loss)
 
 
 def train_mnist(batch_iterator: Iterable[Tuple[tf.Tensor, tf.Tensor]]) -> None:
@@ -57,3 +62,12 @@ def train_mnist(batch_iterator: Iterable[Tuple[tf.Tensor, tf.Tensor]]) -> None:
 
     :param batch_iterator: MNIST training x, y tuples iterator ([None, 784], [None, 10])
     """
+    x = tf.placeholder(dtype=tf.float32, shape=(None, 784), name='x')
+    y = tf.placeholder(dtype=tf.float32, shape=(None, 10), name='y')
+    y_pred = build_mnist_feed_forward(x)
+    train_op = build_mnist_optimizer(y, y_pred)
+
+    sess: tf.Session = tf.get_default_session()
+    sess.run(tf.global_variables_initializer())
+    for batch_x, batch_y in batch_iterator:
+        sess.run([train_op], feed_dict={x: batch_x, y: batch_y})
