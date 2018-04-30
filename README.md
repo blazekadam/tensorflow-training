@@ -5,6 +5,7 @@ Requirements:
 - Python 3.5+
 - tensorflow 1.7+
 - pytest
+- tensorboard
 
 (python packages can be installed with `pip install -r requirements.txt --user`)
 
