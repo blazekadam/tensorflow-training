@@ -9,8 +9,8 @@ def build_facial_keypoints_ff(images: tf.Tensor) -> tf.Tensor:
 
     Tips:
     - scale images to 0-1 (from 0-255)
-    - use tf.layers.conv2d and tf.layers.max_pooling2d and final tf.layers.dense layer
-    - do not forget to select activation function
+    - use tf.layers.conv2d, tf.layers.max_pooling2d and tf.layers.dense layer if need be
+    - do not forget to specify activation functions
     - 32-64 channels should provide satisfactory results
 
     :param images: input images tensor
