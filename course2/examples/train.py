@@ -10,16 +10,17 @@ import tensorflow as tf
 from course2.assignments.data import load_data, batch_data
 from course2.assignments.net import build_facial_keypoints_ff
 
-with tf.Graph().as_default():
+
+def train() -> None:
+    """Train CNN net for facial key-points detection."""
     with tf.Session().as_default() as sess:
         # prepare log directories
         dirname = ''.join(random.choices(string.ascii_lowercase + string.digits, k=10))
-        print(dirname)
         valid_dirname = path.join('log', dirname+'-valid')
         train_dirname = path.join('log', dirname+'-train')
         os.makedirs(valid_dirname)
         os.makedirs(train_dirname)
-        print('Summaries will be written to  {} and {} respectivelly'.format(train_dirname, valid_dirname))
+        print('Summaries will be written to  {} and {} respectively'.format(train_dirname, valid_dirname))
 
         # create placeholders, model and loss summary
         print('Creating model')
@@ -28,8 +29,8 @@ with tf.Graph().as_default():
         predictions = build_facial_keypoints_ff(images)
         flat_targets = tf.layers.flatten(targets)
         loss = tf.reduce_mean(tf.nn.l2_loss(predictions-flat_targets))
-        tf.summary.scalar('loss', loss)
         train_op = tf.train.AdamOptimizer(0.001).minimize(loss)
+        tf.summary.scalar('loss', loss)
 
         # load and split data
         print('Loading data ')
@@ -64,7 +65,7 @@ with tf.Graph().as_default():
 
         print('Entering main loop')
         step = 0
-        for _ in range(5):
+        for _ in range(5):  # five epochs should be enough
             for batch_images, batch_targets in batch_data(train_images, train_targets):
                 # train step
                 _, summaries = sess.run([train_op, train_summaries], {images: batch_images, targets: batch_targets})
@@ -81,3 +82,7 @@ with tf.Graph().as_default():
                 print('.', end='', flush=True)
 
             print('\n- epoch done -')
+
+
+if __name__ == '__main__':
+    train()
